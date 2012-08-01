@@ -7,7 +7,7 @@ XUrl http request util for PHP
 Install
 ==============
 
-add `codegun/xurl` to `require` then install with `composer.phar install`
+Add `codegun/xurl` to `composer.json` then install with `composer.phar install`
 
 
 Usage
