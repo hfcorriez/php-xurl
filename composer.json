@@ -1,0 +1,22 @@
+{
+    "name": "codegun/xurl",
+    "type": "library",
+    "description": "XUrl http request util for PHP",
+    "keywords": ["url", "http", "xurl"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Corrie Zhao",
+            "email": "hfcorriez@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.0.0"
+    },
+    "autoload": {
+        "psr-0": {
+            "CodeGun\\Util\\XUrl": "."
+        }
+    },
+    "target-dir": "CodeGun/Util/XUrl"
+}
