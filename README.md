@@ -21,6 +21,6 @@ Usage
 ==============
 
 ```php
-$xurl = new \CodeGun\XUrl\XUrl();
+$xurl = new \CodeGun\XUrl();
 $r = $xurl->fetch('http://www.baidu.com');
 ```
