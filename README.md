@@ -10,9 +10,17 @@ Install
 Add `codegun/xurl` to `composer.json` then install with `composer.phar install`
 
 
+Namesapce
+==============
+
+All the classes under `CodeGun\XUrl` namespace
+
+- XUrl
+
 Usage
 ==============
 
-All the classes under `CodeGun\Util\XUrl` namespace
-
-- XUrl
+```php
+$xurl = new \CodeGun\XUrl\XUrl();
+$r = $xurl->fetch('http://www.baidu.com');
+```

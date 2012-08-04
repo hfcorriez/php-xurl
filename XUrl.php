@@ -10,7 +10,7 @@
  * @todo 支持只写模式
  */
 
-namespace CodeGun\Util\XUrl;
+namespace CodeGun\XUrl;
 
 class XUrl
 {
