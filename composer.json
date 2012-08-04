@@ -15,8 +15,8 @@
     },
     "autoload": {
         "psr-0": {
-            "CodeGun\\Util\\XUrl": "."
+            "CodeGun\\XUrl": "."
         }
     },
-    "target-dir": "CodeGun/Util/XUrl"
+    "target-dir": "CodeGun/XUrl"
 }
