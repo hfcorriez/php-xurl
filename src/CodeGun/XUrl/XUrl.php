@@ -5,9 +5,9 @@
  *
  * @author      hfcorriez <hfcorriez@gmail.com>
  *
- * @todo 支持上传文件
- * @todo 支持设置Cookie
- * @todo 支持只写模式
+ * @todo        支持上传文件
+ * @todo        支持设置Cookie
+ * @todo        支持只写模式
  */
 
 namespace CodeGun\XUrl;
@@ -25,16 +25,15 @@ class XUrl
     protected $type = self::TYPE_FSOCK;
     protected $post;
     protected $timeout = 0;
-    protected $user_agent;
     protected $http_version = self::HTTP_VERSION_1_1;
     protected $header = array();
     protected $result = array();
     protected $error = false;
 
     /**
-     * 设置代理（目前仅支持http代理）
+     * Set proxy
      *
-     * @param string $str           支持ip:port方式
+     * @param string $str           ip:port
      * @return XUrl
      */
     public function setProxy($str)
@@ -44,7 +43,7 @@ class XUrl
     }
 
     /**
-     * 设置使用的请求类型，默认为fsock方式
+     * Set request type
      *
      * @param string $type          0|1|2
      * @return XUrl
@@ -56,8 +55,9 @@ class XUrl
     }
 
     /**
-     * 设置过期时间
-     * @param int $sec              秒数
+     * Set timeout seconds
+     *
+     * @param int $sec              Seconds
      * @return XUrl
      */
     public function setTimeout($sec = 0)
@@ -67,7 +67,31 @@ class XUrl
     }
 
     /**
-     * 设置header
+     * use CUrl to request
+     */
+    public function useCUrl()
+    {
+        $this->setType(self::TYPE_CURL);
+    }
+
+    /**
+     * Use FSock to request
+     */
+    public function useFSock()
+    {
+        $this->setType(self::TYPE_FSOCK);
+    }
+
+    /**
+     * Use socket to request
+     */
+    public function useSocket()
+    {
+        $this->setType(self::TYPE_SOCKET);
+    }
+
+    /**
+     * Set headers
      *
      * @param mixed  $name           header名称或者数组方式
      * @param string $value          header值
@@ -90,7 +114,7 @@ class XUrl
     }
 
     /**
-     * 设置HTTP协议版本号
+     * Set http version
      *
      * @param string $version           支持1.0,1.1
      * @return XUrl
@@ -102,26 +126,45 @@ class XUrl
     }
 
     /**
-     * 设置User-Agent
+     * Use http 1.0 protocol
+     */
+    public function useHttp10()
+    {
+        $this->setHttpVersion(self::HTTP_VERSION_1_0);
+    }
+
+    /**
+     * Use http 1.1 protocol
+     */
+    public function useHttp11()
+    {
+        $this->setHttpVersion(self::HTTP_VERSION_1_1);
+    }
+
+    /**
+     * Set user agent
      *
      * @param string $agent
      * @return XUrl
      */
     public function setUserAgent($agent)
     {
-        $this->user_agent = $agent;
+        $this->setHeader('User-Agent', $agent);
         return $this;
     }
 
     /**
-     * 设置POST数据
+     * Set post data
+     *
+     * @param array|string $post
+     * @return XUrl
      */
     public function setPost($post)
     {
         if (is_array($post)) {
             $tmp = array();
             foreach ($post as $k => $v) {
-                $tmp[] = "{$k}={$v}";
+                $tmp[] = $k . '=' . urlencode($v);
             }
             $post = join('&', $tmp);
         }
@@ -130,7 +173,7 @@ class XUrl
     }
 
     /**
-     * 获取错误信息
+     * Get error
      *
      * @return string
      */
@@ -140,11 +183,12 @@ class XUrl
     }
 
     /**
-     * 获取数据
-     * @param string $url           要获取的URL
+     * Fetch url response
+     *
+     * @param string $url           Url to request
      * @return array
      */
-    public function fetch($url)
+    public function request($url)
     {
         $this->setError(false);
         if (!$this->checkUrl($url)) return $this->result;
@@ -154,13 +198,25 @@ class XUrl
     }
 
     /**
-     * 解析数据
-     * @param string $response     要解析的数据
+     * Alias for fetch
+     *
+     * @param string $url
+     * @return array
+     */
+    public function fetch($url)
+    {
+        return $this->request($url);
+    }
+
+    /**
+     * Parse response
+     *
+     * @param string $response     Data to parse
      * @return array
      */
     public function parseResponse($response)
     {
-        $result = &$this->result;
+        $result = & $this->result;
 
         if (!$response) {
             $this->setError(true);
@@ -198,9 +254,9 @@ class XUrl
     }
 
     /**
-     * 通过socket获取数据
+     * Get response through socket
      *
-     * @param string $url           要获取的URL
+     * @param string $url           Url to request
      * @return bool|string
      */
     public function socketRequest($url)
@@ -242,9 +298,9 @@ class XUrl
     }
 
     /**
-     * 通过curl获取数据
+     * Get response through curl
      *
-     * @param string $url           要获取的URL
+     * @param string $url           Url to request
      * @return bool|mixed
      */
     public function curlRequest($url)
@@ -260,9 +316,6 @@ class XUrl
             if ($u['scheme'] == 'https') {
                 curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
                 curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, true);
-            }
-            if ($this->user_agent) {
-                curl_setopt($ch, CURLOPT_USERAGENT, $this->user_agent);
             }
             if ($this->http_version == self::HTTP_VERSION_1_0)
                 curl_setopt($ch, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_0);
@@ -285,9 +338,9 @@ class XUrl
     }
 
     /**
-     * 通过fsock获取数据
+     * Get response through fsock
      *
-     * @param string $url           要获取的URL
+     * @param string $url           Url to request
      * @return bool|string
      */
     public function fsockRequest($url)
@@ -314,7 +367,7 @@ class XUrl
     }
 
     /**
-     * 设置错误Error
+     * Set error
      *
      * @param $error
      */
@@ -324,24 +377,24 @@ class XUrl
     }
 
     /**
-     * 检查URL
+     * Check url
      *
-     * @param string $url           要获取的URL
+     * @param string $url           Url to check
      * @return bool
      */
     protected function checkUrl($url)
     {
         $u = self::parseUrl($url);
-        if (!$u) $this->setError('URL解析错误');
-        if (in_array($u['port'], array('', 0))) $this->setError("访问端口异常{$u['port']}");
-        if (!$u['host']) $this->setError("访问主机名异常:{$u['host']}");
+        if (!$u) $this->setError('Url parse error');
+        if (empty($u['port'])) $this->setError("Remote port is empty");
+        if (!$u['host']) $this->setError("Host is empty");
         return !$this->error;
     }
 
     /**
-     * 解析URL
+     * Parse url
      *
-     * @param string $url           要获取的URL
+     * @param string $url           Url to parse
      */
     protected static function parseUrl($url)
     {
@@ -393,9 +446,9 @@ class XUrl
     }
 
     /**
-     * 生成HTTP REQUEST HEADER
+     * Build http header with url
      *
-     * @param string $url           要获取的URL
+     * @param string $url
      * @return string
      */
     protected function buildHttpHeader($url)
@@ -406,10 +459,9 @@ class XUrl
         $in .= "Accept: */*\r\n";
         $in .= 'Host: ' . $u ['hostname'] . "\r\n";
         if ($this->post) {
-            //$in .= "Content-type: application/x-www-form-urlencoded\r\n";
+            $in .= "Content-type: application/x-www-form-urlencoded\r\n";
             $in .= 'Content-Length: ' . strlen($this->post) . "\r\n";
         }
-        if ($this->user_agent) $in .= "User-Agent: {$this->user_agent}\r\n";
         if ($this->header) $in .= join("\r\n", $this->header) . "\r\n";
 
         $in .= "Connection: Close\r\n\r\n";
@@ -418,9 +470,9 @@ class XUrl
     }
 
     /**
-     * 生成HTTP版本号
+     * Build http version
      *
-     * @return string       协议版本号
+     * @return string Http version
      */
     protected function buildHttpVersion()
     {
